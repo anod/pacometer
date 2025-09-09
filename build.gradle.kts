@@ -26,6 +26,12 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
             }
         }
+        val commonTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -38,4 +44,13 @@ compose.desktop {
     application {
         mainClass = "com.anod.pecometer.MainKt"
     }
+}
+
+// Add a task to run the demo
+tasks.register<JavaExec>("demo") {
+    group = "application"
+    description = "Run Pecometer speed calculation demo"
+    dependsOn("compileKotlinJvm")
+    classpath = configurations["jvmRuntimeClasspath"] + kotlin.jvm().compilations["main"].output.allOutputs
+    mainClass.set("com.anod.pecometer.DemoKt")
 }
