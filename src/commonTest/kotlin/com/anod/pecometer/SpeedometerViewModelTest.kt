@@ -2,26 +2,33 @@ package com.anod.pecometer
 
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SpeedometerViewModelTest {
     
     @Test
     fun testInitialState() = runTest {
-        val viewModel = SpeedometerViewModel()
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+        val viewModel = SpeedometerViewModel(testDispatcher)
         val initialState = viewModel.uiState.first()
         
         assertEquals(0f, initialState.currentSpeed)
         assertTrue(initialState.isMetric)
         assertFalse(initialState.isMoving)
+        
+        viewModel.cleanup()
     }
     
     @Test
     fun testUnitToggle() = runTest {
-        val viewModel = SpeedometerViewModel()
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+        val viewModel = SpeedometerViewModel(testDispatcher)
         
         // Set a speed value first (simulate some speed)
         // Wait briefly for simulation to start
@@ -39,14 +46,18 @@ class SpeedometerViewModelTest {
             val expectedSpeedInMph = stateBeforeToggle.currentSpeed * 0.621371f
             assertEquals(expectedSpeedInMph, stateAfterToggle.currentSpeed, 0.1f)
         }
+        
+        viewModel.cleanup()
     }
     
     @Test
     fun testSpeedSimulationEventuallyStarts() = runTest {
-        val viewModel = SpeedometerViewModel()
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+        val viewModel = SpeedometerViewModel(testDispatcher)
         
         // Wait for simulation to kick in
         kotlinx.coroutines.delay(3000)
+        testScheduler.advanceTimeBy(3000)
         
         val state = viewModel.uiState.first()
         

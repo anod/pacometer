@@ -11,11 +11,13 @@ data class SpeedometerUiState(
     val isMoving: Boolean = false
 )
 
-class SpeedometerViewModel {
+class SpeedometerViewModel(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+) {
     private val _uiState = MutableStateFlow(SpeedometerUiState())
     val uiState: StateFlow<SpeedometerUiState> = _uiState.asStateFlow()
     
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val scope = CoroutineScope(dispatcher + SupervisorJob())
     
     init {
         // Start simulating speed changes for demo
