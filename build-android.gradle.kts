@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform") version "1.9.21"
     id("org.jetbrains.compose") version "1.5.11"
+    id("com.android.application") version "8.0.2"
 }
 
 repositories {
@@ -13,6 +14,14 @@ kotlin {
     jvm {
         jvmToolchain(11)
         withJava()
+    }
+    
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     }
     
     sourceSets {
@@ -37,12 +46,60 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
+        val androidMain by getting {
+            dependencies {
+                implementation("androidx.activity:activity-compose:1.8.2")
+                implementation("androidx.core:core-ktx:1.12.0")
+            }
+        }
+    }
+}
+
+android {
+    namespace = "com.anod.pecometer"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.anod.pecometer"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
 compose.desktop {
     application {
-        mainClass = "com.anod.pecometer.DesktopMainKt"
+        mainClass = "com.anod.pecometer.MainKt"
     }
 }
 

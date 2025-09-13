@@ -1,6 +1,5 @@
 package com.anod.pecometer
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
@@ -12,19 +11,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
 import kotlinx.coroutines.*
-
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication, title = "Pecometer") {
-        App()
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun App() {
     val viewModel = remember { SpeedometerViewModel() }
     val uiState by viewModel.uiState.collectAsState()
